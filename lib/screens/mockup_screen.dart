@@ -1,112 +1,214 @@
 import 'package:flutter/material.dart';
 
 class MockupScreen extends StatelessWidget {
-  const MockupScreen({super.key});
+  final String title; // Define the title property
+
+  // Modify constructor to accept the title parameter, without the const keyword
+  MockupScreen({super.key, required this.title});
+
+  final String productName = "Ageratum";
+  final String productDescription =
+      "Ageratum is a genus of 40 to 60 tropical warm temperature flowering annuals and perennials from the family Asteraceae, tribe Eupatorieae. Most species are native to Central America. Read more.";
+  final double productPrice = 12.99;
+  final List<String> productImages = [
+    'assets/images/ba.JPG', // Example image path, replace with your own images
+  ];
+  final double productRating = 4.5;
+  final int reviewCount = 120;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor:
-          Colors.orange.shade50, // Background color similar to the image
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_left, color: Colors.black),
-          onPressed: () {
-            // Handle back action
-            Navigator.of(context).pop();
-          },
-        ),
-        title: const Text(
-          'Details',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.bold,
-            fontSize: 20,
-          ),
-        ),
-        actions: [
-          IconButton(
-            icon: const Icon(
-              Icons.favorite,
-              color: Colors.red,
-            ),
-            onPressed: () {
-              // Handle heart icon action here
-            },
-          ),
-        ],
+        title: Text(title), // Use the title passed in the constructor
       ),
       body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 50), // Top spacing
-
-              // Network Image widget
-              Image.network(
-                'https://your-image-url.com/your-image.jpg', // Replace with your image URL
-                height: 300, // Adjust the height to fit your design
-                fit: BoxFit.cover,
-              ),
-
-              const SizedBox(height: 30),
-
-              // Main Title
-              const Text(
-                'Add to Cart',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 24,
-                  fontWeight: FontWeight.bold,
-                  color: Color.fromARGB(255, 153, 228, 156),
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              // Subtitle text
-              const Text(
-                'Ageratum is a genus of 40 to 60 tropical and warm temperate flowering annuals and perennials from the family...Read more',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.grey,
-                ),
-              ),
-
-              const SizedBox(height: 40),
-
-              // Button at the bottom
-              ElevatedButton(
-                onPressed: () {
-                  // Handle button action here
-                },
-                style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(vertical: 15.0),
-                  minimumSize: const Size(300, 50),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(0),
-                  ),
-                  backgroundColor: Colors.black, // Button color
-                ),
-                child: const Text(
-                  'Next',
-                  style: TextStyle(
-                    fontSize: 18,
-                    color: Colors.white,
+        child: Column(
+          children: [
+            // Image with Back Arrow and Heart Icon (Swapped positions)
+            Stack(
+              children: [
+                // Using PageView to display images
+                SizedBox(
+                  height: 300,
+                  child: PageView.builder(
+                    itemCount: productImages.length,
+                    itemBuilder: (context, index) {
+                      return Image.asset(
+                        productImages[index],
+                        fit: BoxFit.cover,
+                      );
+                    },
                   ),
                 ),
+                Positioned(
+                  top: 20,
+                  left: 10,
+                  child: IconButton(
+                    icon: Icon(Icons.arrow_back, color: Colors.white),
+                    onPressed: () {
+                      Navigator.pop(context); // Go back to previous screen
+                    },
+                  ),
+                ),
+                Positioned(
+                  top: 20,
+                  right: 10,
+                  child: IconButton(
+                    icon: Icon(Icons.favorite, color: Colors.red),
+                    onPressed: () {
+                      // Handle Add to Wishlist
+                    },
+                  ),
+                ),
+              ],
+            ),
+            // Product Title and Rating with Review Count (Reviews moved to the left)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      // Reviews on the left side of the product name
+                      Text(
+                        "($reviewCount reviews)",
+                        style: TextStyle(
+                          fontSize: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      SizedBox(width: 10),
+                      Text(
+                        productName,
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.star,
+                        color: Colors.amber,
+                        size: 20,
+                      ),
+                      Text(
+                        productRating.toStringAsFixed(1),
+                        style: TextStyle(fontSize: 16),
+                      ),
+                    ],
+                  ),
+                ],
               ),
-
-              const SizedBox(height: 20), // Bottom spacing
-            ],
-          ),
+            ),
+            // Product Description
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                productDescription,
+                style: TextStyle(fontSize: 16),
+                textAlign: TextAlign.justify,
+              ),
+            ),
+            // Product Details (Size, Plant Type, Height, Humidity)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildProductDetail('Size', 'Medium'),
+                  _buildProductDetail('Plant', 'Orchid'),
+                  _buildProductDetail('Height', '12.6 cm'),
+                  _buildProductDetail('Humidity', '82%'),
+                ],
+              ),
+            ),
+            // Quantity and Add to Cart Button with Price (Price on the same line as Add to Cart)
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                children: [
+                  // Quantity Selection (Optional)
+                  Expanded(
+                    child: Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(Icons.remove),
+                          onPressed: () {
+                            // Decrease quantity logic
+                          },
+                        ),
+                        Text('1', style: TextStyle(fontSize: 18)),
+                        IconButton(
+                          icon: Icon(Icons.add),
+                          onPressed: () {
+                            // Increase quantity logic
+                          },
+                        ),
+                      ],
+                    ),
+                  ),
+                  // Price and Add to Cart Button on the same line
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Row(
+                        children: [
+                          Text(
+                            '\$${productPrice.toStringAsFixed(2)}',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.green,
+                            ),
+                          ),
+                          SizedBox(width: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              // Add to cart logic
+                            },
+                            child: Text('Add to Cart'),
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: Colors.blue, // Blue Add to Cart button
+                              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
+
+  // Helper function to build product details (Size, Plant, etc.)
+  Widget _buildProductDetail(String title, String value) {
+    return Column(
+      children: [
+        Text(
+          title,
+          style: TextStyle(
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          value,
+          style: TextStyle(fontSize: 16),
+        ),
+      ],
+    );
+  }
 }
+
+

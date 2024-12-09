@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       // home: const MyHomePage(title: 'Flutter Demo Home Page'),
       //home: LoginScreen(),
-      home: const MockupScreen(),
+      home: MockupScreen(title: '',),
     );
   }
 }
